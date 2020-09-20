@@ -16,9 +16,8 @@ UPlayerMovementComponent::UPlayerMovementComponent()
 void UPlayerMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	BindToInputComponent();
 
+	BindToInputComponent();
 }
 
 void UPlayerMovementComponent::BindToInputComponent()
@@ -26,8 +25,18 @@ void UPlayerMovementComponent::BindToInputComponent()
 	OwnerPawn = Cast<APawn>(GetOwner());
 
 	if (OwnerPawn)
-	{
+	{	
 		InputComponent = OwnerPawn->FindComponentByClass<UInputComponent>();
+
+		if (!InputComponent)
+		{
+			auto Controller = OwnerPawn->GetController();
+
+			if (Controller)
+			{
+				InputComponent = OwnerPawn->GetController()->FindComponentByClass<UInputComponent>();
+			}
+		}
 
 		if (InputComponent)
 		{

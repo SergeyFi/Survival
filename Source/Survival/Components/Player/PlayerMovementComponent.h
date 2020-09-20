@@ -23,18 +23,19 @@ protected:
 	
 private:
 
-    	class UInputComponent* InputComponent;
+    class UInputComponent* InputComponent;
     
-    	class APawn* OwnerPawn;
-    	
-    	void BindToInputComponent();
+    class APawn* OwnerPawn;
+
+	
+    void BindToInputComponent();
+
+    void MoveForward(float Value);
+
+    void MoveRight(float Value);
+
+    void Turn(float Value);
     
-    	void MoveForward(float Value);
-    
-    	void MoveRight(float Value);
-    
-    	void Turn(float Value);
-    
-    	void LookUp(float Value);
+    void LookUp(float Value);
 		
 };
