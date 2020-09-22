@@ -18,6 +18,8 @@ public:
 
 protected:
 
+	virtual void BeginPlay() override;
+
 	void AddValue(float AddValue);
 
     void RemoveValue(float RemoveValue);

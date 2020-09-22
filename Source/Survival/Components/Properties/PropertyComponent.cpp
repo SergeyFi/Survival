@@ -8,11 +8,17 @@
 UPropertyComponent::UPropertyComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	SetIsReplicated(true);
 
 	MaxValue = 100.0f;
 	Value = MaxValue;
 
+}
+
+void UPropertyComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SetIsReplicated(true);
 }
 
 void UPropertyComponent::AddValue(float AddValue)
