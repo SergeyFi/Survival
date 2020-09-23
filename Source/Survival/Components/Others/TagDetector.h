@@ -23,6 +23,8 @@ public:
 
 	void StopDetection();
 
+	float GetDetectionRadius();
+
 	UPROPERTY(BlueprintAssignable)
 	FTagDetection OnActorWithTagDetected;
 

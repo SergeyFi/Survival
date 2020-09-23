@@ -16,9 +16,12 @@ UTagDetector::UTagDetector()
 
 void UTagDetector::StartDetection()
 {
-	if (World && Camera)
+	if (GetOwnerRole() != ROLE_Authority)
 	{
-		World->GetTimerManager().SetTimer(TimerDetection, this, &UTagDetector::DetectTag, DetectionRate, true);
+		if (World && Camera)
+		{
+			World->GetTimerManager().SetTimer(TimerDetection, this, &UTagDetector::DetectTag, DetectionRate, true);
+		}
 	}
 }
 
@@ -28,6 +31,11 @@ void UTagDetector::StopDetection()
 	{
 		World->GetTimerManager().ClearTimer(TimerDetection);
 	}
+}
+
+float UTagDetector::GetDetectionRadius()
+{
+	return DetectionLength + DetectionSphereRadius;
 }
 
 
