@@ -7,7 +7,18 @@
 #include "Survival/Structs/Items/ItemData.h"
 #include "InventoryComponent.generated.h"
 
-USTRUCT(BlueprintType)
+USTRUCT()
+struct FInventoryItem
+{
+	GENERATED_BODY()
+
+	int32 ID;
+
+	UPROPERTY()
+	UItemData* Item;
+};
+
+USTRUCT()
 struct FItems
 {
 	GENERATED_BODY()
@@ -16,7 +27,7 @@ struct FItems
 	bool bIsStackable;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<UItemData*> Items;
+	TArray<FInventoryItem> InvItems;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -31,16 +42,22 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddItem(UItemData* ItemData);
 
+	UFUNCTION(BlueprintCallable)
+	UItemData* RemoveItem(FName ItemName, int32 ID, float Count);
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TMap<FName, FItems> Inventory;
 	
 private:
 
+	int32 CurrentID;
+
     void AddNewItem(UItemData* ItemData);
 
-	void AddExistingItem(UItemData* ItemData);
+	void AppendExistingItem(UItemData* ItemData);
+
+	int32 GetID();
 };

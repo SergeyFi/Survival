@@ -22,10 +22,38 @@ void UInventoryComponent::AddItem(UItemData* ItemData)
 			}
 			else
 			{   
-				AddExistingItem(ItemData);
+				AppendExistingItem(ItemData);
 			}
 		}
 	}
+}
+
+UItemData* UInventoryComponent::RemoveItem(FName ItemName, int32 ID, float Count)
+{
+	UItemData* Item = nullptr;
+	
+	if (Inventory.Contains(ItemName))
+	{
+		auto Items = Inventory.Find(ItemName);
+
+		int ItemID = -1;
+		for (auto i = 0; i < Items->InvItems.Num(); ++i)
+		{
+			if (Items->InvItems[i].ID == ID)
+			{
+				ItemID = i;
+				Item = Items->InvItems[i].Item;
+				break;
+			}
+		}
+
+		if (ItemID >= 0)
+		{
+			Items->InvItems.RemoveAt(ItemID);
+		}
+	}
+
+	return Item;
 }
 
 // Called when the game starts
@@ -38,23 +66,32 @@ void UInventoryComponent::BeginPlay()
 
 void UInventoryComponent::AddNewItem(UItemData* ItemData)
 {
-	TArray<UItemData*> Items{ItemData};
+	FInventoryItem InvItem{GetID(), ItemData};
+	
+	TArray<FInventoryItem> Items{InvItem};
 
 	FItems Datas{ItemData->bIsStackable, Items};
 				
 	Inventory.Add(ItemData->ItemName, Datas);
 }
 
-void UInventoryComponent::AddExistingItem(UItemData* ItemData)
+void UInventoryComponent::AppendExistingItem(UItemData* ItemData)
 {
 	auto ItemsData = Inventory.Find(ItemData->ItemName);
 
 	if (ItemsData->bIsStackable)
 	{
-		ItemsData->Items[0]->ItemCount += ItemData->ItemCount;
+		ItemsData->InvItems[0].Item->ItemCount += ItemData->ItemCount;
 	}
 	else
 	{
-		ItemsData->Items.Add(ItemData);
+		ItemsData->InvItems.Add({GetID(), ItemData});
 	}
+}
+
+int UInventoryComponent::GetID()
+{
+	++CurrentID;
+	
+	return CurrentID;
 }
