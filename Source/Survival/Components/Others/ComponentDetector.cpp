@@ -36,6 +36,11 @@ float UComponentDetector::GetDetectionRadius()
 	return DetectionLength + DetectionSphereRadius;
 }
 
+const TArray<UActorComponent*> UComponentDetector::GetLastComponents()
+{
+	return LastComponents;
+}
+
 // Called when the game starts
 void UComponentDetector::BeginPlay()
 {
@@ -82,6 +87,10 @@ void UComponentDetector::DetectComponent()
 			}
 		}
 
-		OnComponentsDetected.Broadcast(Components);
+		if (Components != LastComponents)
+		{
+			LastComponents = Components;
+			OnComponentsDetected.Broadcast(Components);
+		}
 	}
 }

@@ -29,6 +29,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FComponentsDetection OnComponentsDetected;
 
+	UFUNCTION(BlueprintCallable)
+	const TArray<UActorComponent*> GetLastComponents();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -56,5 +59,7 @@ private:
 	FTimerHandle TimerDetection;
 
 	void DetectComponent();
+
+	TArray<UActorComponent*> LastComponents;
 		
 };
