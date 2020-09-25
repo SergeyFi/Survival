@@ -41,12 +41,15 @@ public:
 
 
 	bool AddItem(UItemData* ItemData);
+
+	bool RemoveItem(FName ItemName, float Count, int32 ItemID);
 	
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY()
 	TMap<FName, FItems> Inventory;
 
 
@@ -62,12 +65,14 @@ private:
 
 	bool CheckWeight(UItemData* ItemData);
 
-	bool ItemExist(UItemData* ItemData);
+	bool ItemExist(FName ItemName);
 
 	void AddNewItem(UItemData* ItemData);
 
 	void AppendExistingItem(UItemData* ItemData);
 
 	int32 GetID();
+
+	int32 GetIndexByID(int32 ItemID, TArray<FInventoryItem>& Items);
 
 };

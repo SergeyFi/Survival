@@ -38,4 +38,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AppendItem(UItemData* ItemData);
+
+	UFUNCTION(BlueprintCallable)
+	bool RemoveCount(float Count);
 };

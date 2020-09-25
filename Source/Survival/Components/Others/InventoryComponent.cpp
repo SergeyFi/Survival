@@ -3,8 +3,6 @@
 
 #include "InventoryComponent.h"
 
-#include "IDetailTreeNode.h"
-
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
 {
@@ -19,7 +17,7 @@ bool UInventoryComponent::AddItem(UItemData* ItemData)
 		{
 			if (CheckWeight(ItemData))
 			{
-				if (!ItemExist(ItemData))
+				if (!ItemExist(ItemData->ItemName))
 				{
 					AddNewItem(ItemData);
 				}
@@ -31,6 +29,26 @@ bool UInventoryComponent::AddItem(UItemData* ItemData)
 		}
 	}
 
+	return false;
+}
+
+bool UInventoryComponent::RemoveItem(FName ItemName, float Count, int32 ItemID)
+{
+	if (GetOwnerRole() == ROLE_Authority)
+	{
+		if (ItemExist(ItemName))
+		{
+			auto& Items = Inventory.Find(ItemName)->InvItems;
+
+			auto Index = GetIndexByID(ItemID, Items);
+
+			if (!Items[Index].Item->RemoveCount(Count))
+			{
+				Items.RemoveAt(Index);
+			}
+		}
+	}
+	
 	return false;
 }
 
@@ -47,9 +65,9 @@ bool UInventoryComponent::CheckWeight(UItemData* ItemData)
 	return ItemData->GetWeight() + CurrentInventoryWeight <= MaxInventoryWeight;
 }
 
-bool UInventoryComponent::ItemExist(UItemData* ItemData)
+bool UInventoryComponent::ItemExist(FName ItemName)
 {
-	return Inventory.Contains(ItemData->ItemName);
+	return Inventory.Contains(ItemName);
 }
 
 void UInventoryComponent::AddNewItem(UItemData* ItemData)
@@ -80,5 +98,18 @@ int32 UInventoryComponent::GetID()
 	++ID;
 
 	return ID;
+}
+
+int32 UInventoryComponent::GetIndexByID(int32 ItemID, TArray<FInventoryItem>& Items)
+{
+	for (auto i = 0; i < Items.Num(); ++i)
+	{
+		if (Items[i].ID == ItemID)
+		{
+			return i;
+		}
+	}
+
+	return 0;
 }
 
