@@ -39,25 +39,35 @@ public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 
-	UFUNCTION(BlueprintCallable)
-	void AddItem(UItemData* ItemData);
 
-	UFUNCTION(BlueprintCallable)
-	UItemData* RemoveItem(FName ItemName, int32 ID, float Count);
+	bool AddItem(UItemData* ItemData);
+	
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 	TMap<FName, FItems> Inventory;
-	
+
+
 private:
 
-	int32 CurrentID;
+	UPROPERTY(EditDefaultsOnly)
+	float MaxInventoryWeight;
 
-    void AddNewItem(UItemData* ItemData);
+	UPROPERTY(VisibleAnywhere)
+	float CurrentInventoryWeight;
+
+	int32 ID;
+
+	bool CheckWeight(UItemData* ItemData);
+
+	bool ItemExist(UItemData* ItemData);
+
+	void AddNewItem(UItemData* ItemData);
 
 	void AppendExistingItem(UItemData* ItemData);
 
 	int32 GetID();
+
 };

@@ -28,6 +28,14 @@ public:
 	float ItemCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ItemWeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsStackable;
-	
+
+	UFUNCTION(BlueprintCallable)
+	float GetWeight();
+
+	UFUNCTION(BlueprintCallable)
+	void AppendItem(UItemData* ItemData);
 };

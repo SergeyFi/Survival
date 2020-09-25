@@ -3,57 +3,35 @@
 
 #include "InventoryComponent.h"
 
+#include "IDetailTreeNode.h"
+
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	
 }
 
-void UInventoryComponent::AddItem(UItemData* ItemData)
+bool UInventoryComponent::AddItem(UItemData* ItemData)
 {
 	if (GetOwnerRole() == ROLE_Authority)
 	{
 		if (ItemData)
 		{
-			if (!Inventory.Contains(ItemData->ItemName))
+			if (CheckWeight(ItemData))
 			{
-				AddNewItem(ItemData);
-			}
-			else
-			{   
-				AppendExistingItem(ItemData);
+				if (!ItemExist(ItemData))
+				{
+					AddNewItem(ItemData);
+				}
+				else
+				{
+					AppendExistingItem(ItemData);
+				}
 			}
 		}
 	}
-}
 
-UItemData* UInventoryComponent::RemoveItem(FName ItemName, int32 ID, float Count)
-{
-	UItemData* Item = nullptr;
-	
-	if (Inventory.Contains(ItemName))
-	{
-		auto Items = Inventory.Find(ItemName);
-
-		int ItemID = -1;
-		for (auto i = 0; i < Items->InvItems.Num(); ++i)
-		{
-			if (Items->InvItems[i].ID == ID)
-			{
-				ItemID = i;
-				Item = Items->InvItems[i].Item;
-				break;
-			}
-		}
-
-		if (ItemID >= 0)
-		{
-			Items->InvItems.RemoveAt(ItemID);
-		}
-	}
-
-	return Item;
+	return false;
 }
 
 // Called when the game starts
@@ -64,34 +42,43 @@ void UInventoryComponent::BeginPlay()
 	
 }
 
+bool UInventoryComponent::CheckWeight(UItemData* ItemData)
+{
+	return ItemData->GetWeight() + CurrentInventoryWeight <= MaxInventoryWeight;
+}
+
+bool UInventoryComponent::ItemExist(UItemData* ItemData)
+{
+	return Inventory.Contains(ItemData->ItemName);
+}
+
 void UInventoryComponent::AddNewItem(UItemData* ItemData)
 {
-	FInventoryItem InvItem{GetID(), ItemData};
-	
-	TArray<FInventoryItem> Items{InvItem};
+	FInventoryItem ItemNew {GetID(), ItemData};
 
-	FItems Datas{ItemData->bIsStackable, Items};
-				
-	Inventory.Add(ItemData->ItemName, Datas);
+	TArray<FInventoryItem> InvItemsNew{ItemNew};
+
+	Inventory.Add(ItemData->ItemName, {ItemData->bIsStackable, InvItemsNew});
 }
 
 void UInventoryComponent::AppendExistingItem(UItemData* ItemData)
 {
-	auto ItemsData = Inventory.Find(ItemData->ItemName);
+	auto ItemsExisting = Inventory.Find(ItemData->ItemName);
 
-	if (ItemsData->bIsStackable)
+	if (ItemsExisting->bIsStackable)
 	{
-		ItemsData->InvItems[0].Item->ItemCount += ItemData->ItemCount;
+		ItemsExisting->InvItems[0].Item->AppendItem(ItemData);
 	}
 	else
 	{
-		ItemsData->InvItems.Add({GetID(), ItemData});
+		ItemsExisting->InvItems.Add({GetID(), ItemData});
 	}
 }
 
-int UInventoryComponent::GetID()
+int32 UInventoryComponent::GetID()
 {
-	++CurrentID;
-	
-	return CurrentID;
+	++ID;
+
+	return ID;
 }
+
