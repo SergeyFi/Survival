@@ -7,14 +7,15 @@
 #include "Survival/Structs/Items/ItemData.h"
 #include "InventoryComponent.generated.h"
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FInventoryItem
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 ID;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UItemData* Item;
 };
 
@@ -39,10 +40,14 @@ public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 
-
+	UFUNCTION(BlueprintCallable)
 	bool AddItem(UItemData* ItemData);
 
+	UFUNCTION(BlueprintCallable)
 	bool RemoveItem(FName ItemName, float Count, int32 ItemID);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FInventoryItem> GetItemsList();
 	
 
 protected:

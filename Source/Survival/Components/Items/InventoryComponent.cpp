@@ -25,6 +25,8 @@ bool UInventoryComponent::AddItem(UItemData* ItemData)
 				{
 					AppendExistingItem(ItemData);
 				}
+
+				return true;
 			}
 		}
 	}
@@ -50,6 +52,21 @@ bool UInventoryComponent::RemoveItem(FName ItemName, float Count, int32 ItemID)
 	}
 	
 	return false;
+}
+
+TArray<FInventoryItem> UInventoryComponent::GetItemsList()
+{
+	TArray<FInventoryItem> ItemsList;
+
+	for (auto& Items : Inventory)
+	{
+		for (auto Item : Items.Value.InvItems)
+		{
+			ItemsList.Add(Item);
+		}
+	}
+
+	return ItemsList;
 }
 
 // Called when the game starts
