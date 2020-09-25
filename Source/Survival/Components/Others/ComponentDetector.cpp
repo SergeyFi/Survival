@@ -67,6 +67,8 @@ void UComponentDetector::DetectComponent()
 
 	if (IsDetect)
 	{
+		TArray<UActorComponent*> Components;
+		
 		for (auto& Hit : HitResults)
 		{
 			auto DetectedComponent = Hit.Actor->FindComponentByClass(ComponentToDetect);
@@ -75,9 +77,11 @@ void UComponentDetector::DetectComponent()
 			{
 				if (DetectedComponent->GetOwner() != GetOwner())
 				{
-					OnComponentDetected.Broadcast(DetectedComponent);
+					Components.Add(DetectedComponent);
 				}
 			}
 		}
+
+		OnComponentsDetected.Broadcast(Components);
 	}
 }

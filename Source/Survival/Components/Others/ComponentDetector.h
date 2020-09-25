@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "ComponentDetector.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FComponentDetection, UActorComponent*, DetectedComponent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FComponentsDetection, const TArray<UActorComponent*>&, DetectedComponents);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SURVIVAL_API UComponentDetector : public UActorComponent
@@ -27,7 +27,7 @@ public:
 	float GetDetectionRadius();
 
 	UPROPERTY(BlueprintAssignable)
-	FComponentDetection OnComponentDetected;
+	FComponentsDetection OnComponentsDetected;
 
 protected:
 	// Called when the game starts
