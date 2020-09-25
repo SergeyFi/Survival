@@ -73,7 +73,10 @@ void UComponentDetector::DetectComponent()
 
 			if (DetectedComponent)
 			{
-				OnComponentDetected.Broadcast(DetectedComponent);
+				if (DetectedComponent->GetOwner() != GetOwner())
+				{
+					OnComponentDetected.Broadcast(DetectedComponent);
+				}
 			}
 		}
 	}
