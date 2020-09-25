@@ -10,6 +10,8 @@ UComponentDetector::UComponentDetector()
 	PrimaryComponentTick.bCanEverTick = false;
 
 	DetectionRate = 0.1f;
+
+	bStartOnBeginPlay = true;
 }
 
 void UComponentDetector::StartDetection()
@@ -50,7 +52,10 @@ void UComponentDetector::BeginPlay()
 	
 	World = GetWorld();
 
-	StartDetection();
+	if (bStartOnBeginPlay)
+	{
+		StartDetection();
+	}
 }
 
 TPair<FVector, FVector> UComponentDetector::GenerateDetectPosition()

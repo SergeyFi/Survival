@@ -48,6 +48,9 @@ private:
 	float DetectionLength;
 
 	UPROPERTY(EditDefaultsOnly)
+	bool bStartOnBeginPlay;
+
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UActorComponent> ComponentToDetect;
 
 	TPair<FVector, FVector> GenerateDetectPosition();
