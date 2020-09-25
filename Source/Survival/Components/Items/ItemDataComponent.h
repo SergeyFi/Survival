@@ -20,6 +20,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UItemData* GetData();
 
+protected:
+
+	virtual void BeginPlay() override;
+
 private:
 
 	UPROPERTY(EditDefaultsOnly)

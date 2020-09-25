@@ -8,8 +8,16 @@ UItemDataComponent::UItemDataComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	ItemData = NewObject<UItemData>(ItemClass);
+}
 
+void UItemDataComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (ItemClass)
+	{
+		ItemData = NewObject<UItemData>(ItemClass);
+	}
 }
 
 UItemData* UItemDataComponent::GetData()
