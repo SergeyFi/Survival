@@ -32,6 +32,9 @@ public:
 	float ItemCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float StackSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ItemWeight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
