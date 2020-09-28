@@ -2,6 +2,7 @@
 
 
 #include "InventoryComponent.h"
+#include "Survival/Components/Items/ItemDataComponent.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -9,17 +10,24 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UInventoryComponent::AddItem(UItemData* ItemData)
+void UInventoryComponent::AddItem(UItemDataComponent* ItemDataComponent)
 {
 	if (GetOwnerRole() == ROLE_Authority)
 	{
-		if (ItemData)
+		if (ItemDataComponent)
 		{
-			if (CheckWeight(ItemData))
+			auto ItemData = ItemDataComponent->GetData();
+			
+			if (ItemData)
 			{
-				if (!ItemData->bIsStackable)
+				if (CheckWeight(ItemData))
 				{
-					ReplicatedObjects.Add(ItemData);
+					if (!ItemData->bIsStackable)
+					{
+						ReplicatedObjects.Add(ItemData);
+					}
+
+					ItemDataComponent->GetOwner()->Destroy();
 				}
 			}
 		}
@@ -31,7 +39,7 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	SetIsReplicated(true);
 }
 
 TArray<UItemData*> UInventoryComponent::GetItemsData()

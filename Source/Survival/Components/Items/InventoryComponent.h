@@ -32,7 +32,7 @@ public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 
-	void AddItem(UItemData* ItemData);
+	void AddItem(UItemDataComponent* ItemDataComponent);
 	
 protected:
 	// Called when the game starts
