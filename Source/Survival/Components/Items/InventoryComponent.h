@@ -3,14 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
 #include "Survival/Structs/Items/ItemData.h"
+#include "Survival/Components/Items/ItemDataComponent.h"
+#include "Survival/Components/Others/ObjectsRepComponent.h"
 #include "InventoryComponent.generated.h"
 
 USTRUCT(BlueprintType)
 struct FInventoryItem
 {
 	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere)
+	bool bIsStackable;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int32 ID;
@@ -19,20 +23,8 @@ struct FInventoryItem
 	UItemData* Item;
 };
 
-USTRUCT()
-struct FItems
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly)
-	bool bIsStackable;
-
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FInventoryItem> InvItems;
-};
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class SURVIVAL_API UInventoryComponent : public UActorComponent
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent, IsBlueprintBase="true") )
+class SURVIVAL_API UInventoryComponent : public UObjectsRepComponent
 {
 	GENERATED_BODY()
 
@@ -40,44 +32,23 @@ public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 
-	UFUNCTION(BlueprintCallable)
-	bool AddItem(UItemData* ItemData);
-
-	UFUNCTION(BlueprintCallable)
-	bool RemoveItem(FName ItemName, float Count, int32 ItemID);
-
-	UFUNCTION(BlueprintCallable)
-	TArray<FInventoryItem> GetItemsList();
+	void AddItem(UItemData* ItemData);
 	
-
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	UPROPERTY()
-	TMap<FName, FItems> Inventory;
+	UPROPERTY(EditDefaultsOnly)
+	float MaxWeight;
 
+	UPROPERTY(EditDefaultsOnly)
+	float CurrentWeight;
 
 private:
 
-	UPROPERTY(EditDefaultsOnly)
-	float MaxInventoryWeight;
+	TArray<class UItemData*> GetItemsData();
 
-	UPROPERTY(VisibleAnywhere)
-	float CurrentInventoryWeight;
-
-	int32 ID;
+	UItemData* GetItem(FName ItemName);
 
 	bool CheckWeight(UItemData* ItemData);
-
-	bool ItemExist(FName ItemName);
-
-	void AddNewItem(UItemData* ItemData);
-
-	void AppendExistingItem(UItemData* ItemData);
-
-	int32 GetID();
-
-	int32 GetIndexByID(int32 ItemID, TArray<FInventoryItem>& Items);
-
 };

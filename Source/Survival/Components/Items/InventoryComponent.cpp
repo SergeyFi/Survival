@@ -9,7 +9,7 @@ UInventoryComponent::UInventoryComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-bool UInventoryComponent::AddItem(UItemData* ItemData)
+void UInventoryComponent::AddItem(UItemData* ItemData)
 {
 	if (GetOwnerRole() == ROLE_Authority)
 	{
@@ -17,56 +17,13 @@ bool UInventoryComponent::AddItem(UItemData* ItemData)
 		{
 			if (CheckWeight(ItemData))
 			{
-				if (!ItemExist(ItemData->ItemName))
+				if (!ItemData->bIsStackable)
 				{
-					AddNewItem(ItemData);
+					ReplicatedObjects.Add(ItemData);
 				}
-				else
-				{
-					AppendExistingItem(ItemData);
-				}
-
-				return true;
 			}
 		}
 	}
-
-	return false;
-}
-
-bool UInventoryComponent::RemoveItem(FName ItemName, float Count, int32 ItemID)
-{
-	if (GetOwnerRole() == ROLE_Authority)
-	{
-		if (ItemExist(ItemName))
-		{
-			auto& Items = Inventory.Find(ItemName)->InvItems;
-
-			auto Index = GetIndexByID(ItemID, Items);
-
-			if (!Items[Index].Item->RemoveCount(Count))
-			{
-				Items.RemoveAt(Index);
-			}
-		}
-	}
-	
-	return false;
-}
-
-TArray<FInventoryItem> UInventoryComponent::GetItemsList()
-{
-	TArray<FInventoryItem> ItemsList;
-
-	for (auto& Items : Inventory)
-	{
-		for (auto Item : Items.Value.InvItems)
-		{
-			ItemsList.Add(Item);
-		}
-	}
-
-	return ItemsList;
 }
 
 // Called when the game starts
@@ -77,56 +34,32 @@ void UInventoryComponent::BeginPlay()
 	
 }
 
-bool UInventoryComponent::CheckWeight(UItemData* ItemData)
+TArray<UItemData*> UInventoryComponent::GetItemsData()
 {
-	return ItemData->GetWeight() + CurrentInventoryWeight <= MaxInventoryWeight;
-}
+	TArray<UItemData*> Datas;
 
-bool UInventoryComponent::ItemExist(FName ItemName)
-{
-	return Inventory.Contains(ItemName);
-}
-
-void UInventoryComponent::AddNewItem(UItemData* ItemData)
-{
-	FInventoryItem ItemNew {GetID(), ItemData};
-
-	TArray<FInventoryItem> InvItemsNew{ItemNew};
-
-	Inventory.Add(ItemData->ItemName, {ItemData->bIsStackable, InvItemsNew});
-}
-
-void UInventoryComponent::AppendExistingItem(UItemData* ItemData)
-{
-	auto ItemsExisting = Inventory.Find(ItemData->ItemName);
-
-	if (ItemsExisting->bIsStackable)
+	for (auto RepObject : ReplicatedObjects)
 	{
-		ItemsExisting->InvItems[0].Item->AppendItem(ItemData);
+		Datas.Add(Cast<UItemData>(RepObject));
 	}
-	else
-	{
-		ItemsExisting->InvItems.Add({GetID(), ItemData});
-	}
+
+	return Datas;
 }
 
-int32 UInventoryComponent::GetID()
+UItemData* UInventoryComponent::GetItem(FName ItemName)
 {
-	++ID;
-
-	return ID;
-}
-
-int32 UInventoryComponent::GetIndexByID(int32 ItemID, TArray<FInventoryItem>& Items)
-{
-	for (auto i = 0; i < Items.Num(); ++i)
+	for (auto Item : GetItemsData())
 	{
-		if (Items[i].ID == ItemID)
+		if (Item->ItemName == ItemName)
 		{
-			return i;
+			return Item;
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
+bool UInventoryComponent::CheckWeight(UItemData* ItemData)
+{
+	return ItemData->GetWeight() + CurrentWeight <= MaxWeight;
+}
