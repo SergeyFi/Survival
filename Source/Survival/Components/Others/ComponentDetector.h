@@ -8,7 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FComponentsDetection, const TArray<UActorComponent*>&, DetectedComponents);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent, IsBlueprintBase="true") )
 class SURVIVAL_API UComponentDetector : public UActorComponent
 {
 	GENERATED_BODY()

@@ -16,7 +16,7 @@ UComponentDetector::UComponentDetector()
 
 void UComponentDetector::StartDetection()
 {
-	if (GetOwnerRole() == ROLE_Authority)
+	if (GetOwnerRole() != ROLE_Authority)
 	{
 		if (World && Camera && ComponentToDetect)
 		{
