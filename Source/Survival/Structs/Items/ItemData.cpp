@@ -2,6 +2,14 @@
 
 
 #include "ItemData.h"
+#include "Net/UnrealNetwork.h"
+
+void UItemData::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    DOREPLIFETIME(UItemData, ItemCount);
+}
 
 float UItemData::GetWeight()
 {

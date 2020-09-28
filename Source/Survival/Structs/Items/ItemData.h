@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Survival/Objects/ObjectReplicated.h"
 #include "ItemData.generated.h"
 
 UENUM(BlueprintType)
@@ -13,18 +14,21 @@ enum class EItemType : uint8
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent, IsBlueprintBase="true") )
-class SURVIVAL_API UItemData : public UObject
+class SURVIVAL_API UItemData : public UObjectReplicated
 {
 	GENERATED_BODY()
 
 public:
+
+	void GetLifetimeReplicatedProps (TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EItemType ItemType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName ItemName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float ItemCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
