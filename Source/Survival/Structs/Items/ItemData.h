@@ -35,17 +35,18 @@ public:
 	float StackSize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ItemUnitWeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ItemWeight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsStackable;
 
 	UFUNCTION(BlueprintCallable)
-	float GetWeight();
-
-	UFUNCTION(BlueprintCallable)
 	void AppendItem(UItemData* ItemData);
 
-	UFUNCTION(BlueprintCallable)
-	bool RemoveCount(float Count);
+private:
+
+	void UpdateWeight();
 };

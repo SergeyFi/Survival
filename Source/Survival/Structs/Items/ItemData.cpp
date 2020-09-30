@@ -11,25 +11,22 @@ void UItemData::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetim
     DOREPLIFETIME(UItemData, ItemCount);
 }
 
-float UItemData::GetWeight()
-{
-    return ItemCount * ItemWeight;
-}
-
 void UItemData::AppendItem(UItemData* ItemData)
 {
     ItemCount += ItemData->ItemCount;
-    ItemWeight += ItemData->GetWeight();
-}
+    ItemData->ItemCount = 0.0f;
 
-bool UItemData::RemoveCount(float Count)
-{
-    ItemCount -= Count;
+    auto RemainingItem = StackSize - ItemCount;
 
-    if (ItemCount <= 0.0f)
+    if (RemainingItem <= 0.0f)
     {
-        return false;
+        ItemData->ItemCount -= RemainingItem;
     }
 
-    return true;
+    UpdateWeight();
+}
+
+void UItemData::UpdateWeight()
+{
+    ItemWeight = ItemCount * ItemUnitWeight;
 }
