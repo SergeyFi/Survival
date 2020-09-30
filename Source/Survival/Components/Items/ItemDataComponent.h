@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "Survival/Components/Others/ObjectsRepComponent.h"
 #include "Survival/Structs/Items/ItemData.h"
 #include "ItemDataComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class SURVIVAL_API UItemDataComponent : public UActorComponent
+class SURVIVAL_API UItemDataComponent : public UObjectsRepComponent
 {
 	GENERATED_BODY()
 
@@ -28,8 +28,5 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UItemData> ItemClass;
-
-	UPROPERTY()
-	UItemData* ItemData;
 		
 };

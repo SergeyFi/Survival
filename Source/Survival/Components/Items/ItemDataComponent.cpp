@@ -14,13 +14,18 @@ void UItemDataComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (ItemClass)
+	if (ItemClass && GetOwnerRole() == ROLE_Authority)
 	{
-		ItemData = NewObject<UItemData>(ItemClass);
+		ReplicatedObjects.Add(NewObject<UItemData>(this, ItemClass));
 	}
 }
 
 UItemData* UItemDataComponent::GetData()
 {
-	return ItemData;
+	if (ReplicatedObjects.Num() > 0)
+	{
+		return  Cast<UItemData>(ReplicatedObjects[0]);
+	}
+	
+	return nullptr;
 }
