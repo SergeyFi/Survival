@@ -50,5 +50,7 @@ private:
 
 	UItemData* GetItem(FName ItemName);
 
-	bool CheckWeight(UItemData* ItemData);
+	bool AddWeight(UItemData* ItemData);
+
+	void AddItem(UItemData* ItemData);
 };

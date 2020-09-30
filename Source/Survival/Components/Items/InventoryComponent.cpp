@@ -8,6 +8,8 @@
 UInventoryComponent::UInventoryComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+
+	MaxWeight = 30.0f;
 }
 
 void UInventoryComponent::AddItem(UItemDataComponent* ItemDataComponent)
@@ -20,11 +22,22 @@ void UInventoryComponent::AddItem(UItemDataComponent* ItemDataComponent)
 			
 			if (ItemData)
 			{
-				if (CheckWeight(ItemData))
-				{
-					if (!ItemData->bIsStackable)
+				if (AddWeight(ItemData))
+				{	
+					auto ExistingItem = GetItem(ItemData->ItemName);
+					
+					if (!ItemData->bIsStackable || ItemData->bIsStackable && ExistingItem == nullptr)
 					{
-						ReplicatedObjects.Add(ItemData);
+						AddItem(ItemData);
+					}
+					else
+					{
+						ExistingItem->AppendItem(ItemData);
+
+						if (ItemData->ItemCount > 0)
+						{
+							AddItem(ItemData);
+						}
 					}
 
 					ItemDataComponent->GetOwner()->Destroy();
@@ -67,7 +80,19 @@ UItemData* UInventoryComponent::GetItem(FName ItemName)
 	return nullptr;
 }
 
-bool UInventoryComponent::CheckWeight(UItemData* ItemData)
+bool UInventoryComponent::AddWeight(UItemData* ItemData)
 {
-	return ItemData->GetWeight() + CurrentWeight <= MaxWeight;
+	if (ItemData->ItemWeight + CurrentWeight <= MaxWeight)
+	{
+		CurrentWeight += ItemData->ItemWeight;
+
+		return true;
+	}
+	
+	return false;
+}
+
+void UInventoryComponent::AddItem(UItemData* ItemData)
+{
+	ReplicatedObjects.Add(ItemData);
 }
